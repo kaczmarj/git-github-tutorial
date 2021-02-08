@@ -1,0 +1,779 @@
+<!-- 
+Copyright 2021 Jakub Kaczmarzyk
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. 
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Tutorial on git and GitHub</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+        @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+        @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+        body {
+            font-family: 'Droid Serif';
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Yanone Kaffeesatz';
+            font-weight: normal;
+        }
+
+        .remark-code,
+        .remark-inline-code {
+            font-family: 'Ubuntu Mono';
+        }
+    </style>
+</head>
+
+<body>
+    <textarea id="source">
+class: center, middle
+
+# Version control and collaboration
+# with `git` and GitHub
+
+Jakub Kaczmarzyk ([@kaczmarj](https://github.com/kaczmarj))
+
+February 9, 2021
+
+---
+class: center, middle
+
+<img src="http://phdcomics.com/comics/archive/phd101212s.gif" width="55%">
+
+---
+class: center, middle
+
+![xkcd comic: git](https://imgs.xkcd.com/comics/git.png)
+
+---
+
+# Agenda
+
+1. Introduction to version control with `git`
+    - Create a repository
+    - Common workflow
+    - Branches
+    - Merge conflicts
+3. Introduction to GitHub
+    - Comparison with `git`?
+    - Uploading your repository
+    - Merge conflicts
+
+---
+
+# `git` - _The stupid content tracker_
+
+Open a terminal, and type this in the console.
+
+```sh
+git --help
+```
+
+I suggest typing out the commands yourself rather than copying and pasting. I find that this helps
+me remember the commands.
+
+----
+
+If an error like `program not found` appears, please install `git` from https://git-scm.com/download.
+
+---
+
+# `git config` | getting started
+
+Let us introduce ourselves.
+
+```sh
+git config --global user.name "My Name"
+git config --global user.email "me@email.com"
+```
+
+Our name and email address will be associated with all of our _commits_.
+
+----
+
+[_commit_](https://git-scm.com/docs/gitglossary#Documentation/gitglossary.txt-aiddefcommitacommit):
+> As a noun: A single point in the Git history; the entire history of a project is represented as a set 
+of interrelated commits. The word "commit" is often used by Git in the same places other revision control
+systems use the words "revision" or "version". Also used as a short hand for commit object.
+> 
+> As a verb: The action of storing a new snapshot of the project’s state in the Git history, by creating a 
+new commit representing the current state of the index and advancing HEAD to point at the new commit.
+
+---
+
+# `git` - commits visualized
+
+Each circle represents a commit. The left-most circle is the initial commit. Each subsequent circle represents changes
+made in the content (e.g., code).
+
+Commits form a directed acyclic graph (DAG). _Each commit stores the differences in content from the previous commit_.
+
+<svg width="800" height="150" xmlns="http://www.w3.org/2000/svg">
+    <!-- Created with Method Draw - http://github.com/duopixel/Method-Draw/ -->
+<g>
+    <title>Flowchart</title>
+    <ellipse ry="40" rx="40" id="svg_13" cy="86.5" cx="66.5" stroke-width="9" stroke="#000000" fill="#56aaff"/>
+    <line stroke-linecap="null" stroke-linejoin="null" id="svg_14" y2="86.5" x2="225.82755" y1="86.5" x1="108.40098" stroke-width="9" stroke="#000000" fill="none"/>
+    <ellipse ry="40" rx="40" id="svg_16" cy="86.5" cx="262.22685" stroke-width="9" stroke="#000000" fill="#56aaff"/>
+    <line stroke-linecap="null" stroke-linejoin="null" id="svg_20" y2="86.5" x2="420.08512" y1="86.5" x1="302.65855" stroke-width="9" stroke="#000000" fill="none"/>
+    <ellipse ry="40" rx="40" id="svg_21" cy="86.5" cx="456.48442" stroke-width="9" stroke="#000000" fill="#56aaff"/>
+</g>
+</svg>
+
+One can view the state of the repository at any commit.
+
+----
+
+"Everything not saved will be lost." (Nintendo "quit screen" message)
+
+---
+layout: true
+# `git init` | create a repository
+
+We use the command [`git init`](https://git-scm.com/docs/git-init) to initialize a repository.
+
+>This command creates an empty Git repository - basically a `.git` directory with subdirectories 
+for `objects` [an immutable unit of storage] [...]. An initial branch without any commits will be created.
+
+```bash
+mkdir git-tutorial
+cd git-tutorial
+git init
+```
+
+---
+
+---
+
+At this point, we have an empty Git repository. Look at the output of `git status` to see the
+current status of the repository.
+
+```bash
+git status
+```
+
+----
+
+**`git status` is your friend.** If you are unsure about the state of your repository, ask `git status`.
+If you are confused, it will usually tell you what to do next.
+
+---
+layout: true
+
+# add content to the repository
+
+Create a file called `README.md` with the following content:
+
+```bash
+Hello, World! This is README.md speaking.
+```
+
+---
+
+---
+
+And then look at the output of
+
+```bash
+git status
+```
+
+```bash
+git status
+On branch master
+
+No commits yet
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	README.md
+
+nothing added to commit but untracked files present (use "git add" to track)
+
+```
+---
+layout: true
+
+# `git add` | ask `git` to track files
+
+Although it might seem so, `git` is not a mind-reader. It does not know about files until we explicitly 
+tell it to track the files. To do this, we use [`git add`](https://git-scm.com/docs/git-add).
+
+```bash
+git add README.md
+```
+
+---
+
+---
+
+Again, look at the output of
+
+```bash
+git status
+```
+
+```bash
+On branch master
+
+No commits yet
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+
+	new file:   README.md
+
+```
+
+---
+layout: true
+
+# `git commit` | record changes
+
+Now that `git` is aware of our file, we want to commit it to memory. 
+To do this, we use [`git commit`](https://git-scm.com/docs/git-commit).
+
+```bash
+git commit --message "initial commit of readme" README.md
+```
+
+Every commit has a corresponding message. Make it descriptive!
+
+---
+
+---
+
+Again, ask our old friend `git status` for the rundown.
+
+```bash
+git status
+```
+
+```bash
+On branch master
+nothing to commit, working tree clean
+```
+
+----
+
+Ah, _working tree clean_.
+
+---
+
+## Another way to write a commit message
+
+If we had omitted the `-m/--message` option, a text editor would open for us to write in. This is especially useful
+when writing multi-line commit messages.
+
+```bash
+git commit README.md
+```
+
+To modify the default editor (uses `emacs` below):
+
+```bash
+git config --global core.editor emacs
+```
+
+---
+
+## As a DAG
+
+<svg width="800" height="150" xmlns="http://www.w3.org/2000/svg">
+    <!-- Created with Method Draw - http://github.com/duopixel/Method-Draw/ -->
+<g>
+    <ellipse ry="40" rx="40" id="svg_13" cy="86.5" cx="66.5" stroke-width="9" stroke="#000000" fill="#56aaff"/>
+</g>
+</svg>
+
+This is the first commit, the ancestor of all future commits.
+
+---
+
+----
+
+.center[_Don't get lazy._]
+
+.center[![xkcd comic: git commit](https://imgs.xkcd.com/comics/git_commit.png)]
+
+---
+layout: true
+
+# Track a change
+
+Add the line below to `README.md`:
+
+```bash
+This is World replying.
+```
+
+`README.md` should now look like this:
+
+```bash
+Hello, World! This is README.md speaking.
+This is World replying.
+```
+
+---
+
+---
+
+We visit our friend, quickly becoming family, `git status`:
+
+```bash
+On branch master
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	modified:   README.md
+
+no changes added to commit (use "git add" and/or "git commit -a")
+```
+
+---
+
+The file has been modified. But what has been changed?
+
+```bash
+git diff README.md
+```
+
+---
+layout: false
+
+# Track a change - staging area
+
+.center[<img src="https://git-scm.com/images/about/index1@2x.png"  width="55%">]
+
+We use `git add` to add changes to the [staging area](https://git-scm.com/about/staging-area).
+The staging area allows us to review what we want to commit before we commit.
+
+```bash
+git add README.md
+```
+
+Then check the status.
+
+```bash
+git status
+```
+
+---
+layout: true
+# Tracking a change - commit to memory
+
+Now that we are confident we want to commit, let us come up with a descriptive message and commit the changes.
+
+```bash
+git commit -m "add a reply from the world"
+```
+
+Notice that we did not add any filepaths to the command. `git commit` will commit everything in the staging area.
+
+---
+
+---
+
+## Our commits as a DAG
+
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+<!-- Created with Method Draw - http://github.com/duopixel/Method-Draw/ -->
+<g>
+    <ellipse ry="40" rx="40" id="svg_13" cy="98.5" cx="66.5" stroke-width="9" stroke="#000000" fill="#56aaff"/>
+    <line stroke-linecap="null" stroke-linejoin="null" id="svg_14" y2="98.5" x2="225.82755" y1="98.5" x1="108.40098" stroke-width="9" stroke="#000000" fill="none"/>
+    <ellipse ry="40" rx="40" id="svg_16" cy="98.5" cx="262.22685" stroke-width="9" stroke="#000000" fill="#56aaff"/>
+</g>
+</svg>
+
+---
+layout: false
+
+# `git log` | show commit logs
+
+To view metadata about recent commits, we can use
+
+```bash
+git log
+```
+
+```bash
+commit 5c905ca7ad0fc4c57eb7acc863949dbf0a67865e (HEAD -> master)
+Author: myusername <me@email.com>
+Date:   Sun Feb 7 20:22:04 2021 -0500
+
+    add a reply from the world
+
+commit 94250c2609bb93df2c56e190abe920c9619bf905
+Author: myusername <me@email.com>
+Date:   Sun Feb 7 17:11:39 2021 -0500
+
+    initial commit of readme
+```
+
+---
+layout: false
+
+# Jakub's workflow
+
+```bash
+# Initialize the git repository and commit files initially.
+git init
+git add FILES
+git commit -m "initial commit"
+
+# Make changes to files ...
+
+git status         # See the current status of the repository
+git diff           # See what has changed
+git add FILES      # Add files to the staging area
+git status         # Inspect the staging area
+
+# Commit change to memory
+git commit -m "a useful commit message here"
+
+# Create a new file things.txt ...
+
+git status          # See the current status
+git add things.txt  # Tell git to track the file
+git status          # Inspect the staging area
+
+# Commit file memory.
+git commit -m "useful message"
+
+# And so on ...
+```
+
+---
+
+# Branches
+
+We want to work on a new feature, but it will take time and get messy. We want to preserve the sanctity of our
+main branch while working on this feature, so to do this, _we deviate_ from our main branch and create a new one.
+Later on, _we will merge_ these changes back into the main branch.
+
+**Heuristic: once there is a working main branch, _all new content should be added through branches_.**
+
+This heuristic leads to more organized code and a cleaner main branch.
+
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+<!-- Created with Method Draw - http://github.com/duopixel/Method-Draw/ -->
+<g>
+    <title>Layer 1</title>
+    <ellipse ry="40" rx="40" id="svg_13" cy="188.68924" cx="49.5" stroke-width="9" stroke="#000000" fill="#56aaff"/>
+    <line stroke-linecap="null" stroke-linejoin="null" id="svg_14" y2="188.68924" x2="208.82755" y1="188.68924" x1="91.40098" stroke-width="9" stroke="#000000" fill="none"/>
+    <ellipse ry="40" rx="40" id="svg_16" cy="188.68924" cx="245.22685" stroke-width="9" stroke="#000000" fill="#56aaff"/>
+    <line transform="rotate(-45, 319.196, 119.014)" stroke-linecap="null" stroke-linejoin="null" id="svg_20" y2="119.0138" x2="377.40968" y1="119.0138" x1="260.9831" stroke-width="9" stroke="#000000" fill="none"/>
+    <ellipse ry="40" rx="40" id="svg_21" cy="49.18924" cx="390.48442" stroke-width="9" stroke="#000000" fill="#ffff00"/>
+    <line stroke-linecap="null" stroke-linejoin="null" id="svg_37" y2="49.18924" x2="549.82755" y1="49.18924" x1="432.40098" stroke-width="9" stroke="#000000" fill="none"/>
+    <ellipse ry="40" rx="40" id="svg_38" cy="49.18924" cx="586.22685" stroke-width="9" stroke="#000000" fill="#ffff00"/>
+    <line transform="rotate(45, 657.196, 120.014)" stroke-linecap="null" stroke-linejoin="null" id="svg_42" y2="120.0138" x2="715.40968" y1="120.0138" x1="598.9831" stroke-width="9" stroke="#000000" fill="none"/>
+    <line stroke-linecap="null" stroke-linejoin="null" id="svg_43" y2="188.68926" x2="678.87964" y1="188.68926" x1="287.45307" stroke-width="9" stroke="#000000" fill="none"/>
+    <ellipse ry="40" rx="40" id="svg_44" cy="188.68924" cx="715.27898" stroke-width="9" stroke="#000000" fill="#56aaff"/>
+    <text xml:space="preserve" text-anchor="start" font-family="sans-serif" font-size="24" id="svg_45" y="178.5" x="414.5" stroke-opacity="null" stroke-width="0" stroke="#000000" fill="#000000">Main branch</text>
+    <text xml:space="preserve" text-anchor="start" font-family="sans-serif" font-size="24" id="svg_46" y="77.5" x="443.325" stroke-opacity="null" stroke-width="0" stroke="#000000" fill="#000000">Feature</text>
+</g>
+</svg>
+
+---
+layout: true
+
+# `git checkout` | switch to a branch
+
+To create a new branch and checkout to it, use
+
+```bash
+git checkout -b add/pluto
+```
+
+where `add/pluto` is the name of the branch. We chose this name because we will be adding a message from Pluto.
+See how we are describing the purpose of this feature concisely in the branch name?
+
+---
+
+---
+
+Now if you run
+
+```bash
+git status
+```
+
+you will see that we are in the `add/pluto` branch.
+
+You can switch between branches using
+
+```bash
+git checkout BRANCH
+```
+
+where `BRANCH` is the name of the branch.
+
+---
+layout: true
+
+# Add a feature
+
+Let's stay in the branch `add/pluto`, and let's add this line to `README.md`.
+
+```diff
+It's cold out here, guys. -Pluto
+```
+
+`README.md` should now contain
+
+```diff
+Hello, World! This is README.md speaking.
+This is World replying.
+It's cold out here, guys. -Pluto
+```
+
+---
+
+---
+
+## Commit the changes
+
+```bash
+git add README.md
+git commit -m "Add a message from Pluto"
+```
+
+---
+layout: true
+
+# `git merge` | merge the changes
+
+We are satisfied with the state of the new feature. Now we want to merge these changes into the main branch.
+
+```bash
+git checkout master  # whatever the main branch is
+git merge add/pluto
+```
+
+---
+
+---
+
+There it is! We have merged our feature into the main branch.
+
+If you look at `README.md`, you should see the following:
+
+```diff
+Hello, World! This is README.md speaking.
+This is World replying.
+It's cold out here, guys. -Pluto
+```
+
+---
+layout: false
+
+# Merge conflicts
+
+A merge conflict happens when changes conflict. For example, while working on your feature branch,
+someone might have modified some lines of code that you are also modifying. When it comes time to merge
+your branch, `git` does not know which changes to keep. In the case of a merge conflict, you will have to
+tell `git` which changes should be kept.
+
+In the code below, we will create a merge conflict by creating a feature branch and committing changes, while
+also creating another feature branch from master and merging changes in the same lines.
+
+```bash
+git checkout -b add/milky-way
+echo "The Milky Way is great." >> README.md
+git add README.md
+git commit -m "add a statement of my admiration for the milky way" README.md
+git checkout master  # checkout to master first, so we branch from master!
+git checkout -b add/sun
+echo "The Sun is the most excellent star." >> README.md
+git add README.md
+git commit -m "add a positive message about the sun"
+git checkout master
+git merge add/sun    # merge only the changes about the sun.
+```
+
+---
+layout: true
+
+# Merge conflicts
+
+Let's try to merge our Milky Way feature.
+
+```bash
+git merge add/milky-way
+```
+
+---
+
+---
+
+Uh oh...
+
+```bash
+Auto-merging README.md
+CONFLICT (content): Merge conflict in README.md
+Automatic merge failed; fix conflicts and then commit the result.
+```
+
+The main issue is that the feature branch was not up to date with master.
+
+---
+layout: false
+
+# Merge conflicts
+
+**Heuristic: always keep branches updated with master. Work out merge conflicts _before_ merging 
+branches into master.**
+
+Let's abort the change and fix the merge issues in the feature branch. We want a nice clean merge into the main 
+branch.
+
+```bash
+git merge --abort
+git checkout add/milky-way
+git merge master            # Merge master branch into feature branch
+```
+
+We have the same error, but we will take care of it here...
+
+---
+layout: false
+
+# Merge conflicts - resolution
+
+The contents of `README.md` are now
+
+```diff
+Hello, World! This is README.md speaking.
+This is World replying.
+It's cold out here, guys. -Pluto
+<<<<<<< HEAD
+The Milky Way is great.
+=======
+The Sun is the most excellent star.
+>>>>>>> master
+```
+
+The goal here is to modify the content between `<<< >>>` to our satisfaction. We could keep the line about the
+Milky Way, the line about the Sun, or we could keep both lines, or replace it with something entirely different.
+
+In this case, let's keep both lines, with the Milky Way line coming after the line about the Sun. The file
+should look like this now.
+
+```diff
+Hello, World! This is README.md speaking.
+This is World replying.
+It's cold out here, guys. -Pluto
+The Sun is the most excellent star.
+The Milky Way is great.
+```
+
+---
+
+# Merge conflicts - resolution
+
+Our friend `git status` will help us. After we made our changes, it suggests using `git add`.
+
+```bash
+git add README.md
+git commit -m "merge master branch"
+```
+
+Notice this commit message is about merging. This commit represents the merging of master into the feature branch.
+In other words, we have updated our feature branch with the current state of master.
+
+If we merge the feature branch into master now, there should be no problems.
+
+```bash
+git checkout master
+git merge add/milky-way
+```
+
+And `README.md` looks like this
+
+```diff
+Hello, World! This is README.md speaking.
+This is World replying.
+It's cold out here, guys. -Pluto
+The Sun is the most excellent star.
+The Milky Way is great.
+```
+
+---
+layout: false
+
+# Jakub's workflow - with branches
+
+Assume we have a `git` repository.
+
+```bash
+git checkout master     # branch from master
+git checkout -b BRANCH
+
+# Make changes ...
+
+git add FILES
+git commit -m "a useful commit message here"
+
+# Periodically merge updates from the master branch.
+# Work out any merge conflicts while in the feature branch.
+git merge master
+
+# Merge the changes into master.
+git checkout master
+git merge master
+```
+
+---
+
+layout: false
+
+# Heuristics regarding branches
+
+1. Once there is a working main branch, _all new content should be added through branches._
+    - What does "working" mean? That is up to you. Perhaps it means that the repository has a file in it.
+1. Always keep branches updated with master. _Work out merge conflicts before merging branches into master._
+
+---
+
+# Questions?
+
+If you remember one thing, let it be `git status`.
+
+Here is a [`git` cheatsheet from GitHub](https://training.github.com/downloads/github-git-cheat-sheet/).
+
+    </textarea>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/remark/0.14.0/remark.min.js"
+        integrity="sha512-bj/tdW5m8Fiyt169efxoa7k2VvD4nE/IxHrBHagqhFleqZuFpmGD75RUrOta73Fw3vItyrwNKAVSeFY1CenpFQ=="
+        crossorigin="anonymous"></script>
+    <script>
+        var slideshow = remark.create({
+            highlightStyle: 'monokai',
+            highlightLines: true,
+        });
+
+    </script>
+</body>
+
+</html>
