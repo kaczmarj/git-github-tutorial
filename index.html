@@ -1,4 +1,4 @@
-<!-- 
+<!--
 Copyright 2021 Jakub Kaczmarzyk
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -11,7 +11,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-limitations under the License. 
+limitations under the License.
 -->
 
 <!DOCTYPE html>
@@ -53,7 +53,38 @@ class: center, middle
 
 Jakub Kaczmarzyk ([@kaczmarj](https://github.com/kaczmarj))
 
-February 9, 2021
+Koo Lab<br>MD-PhD program at Stony Brook
+
+May 12, 2021
+
+---
+# What is version control?
+
+> Version control is a system that records changes to a file or set of files over time
+> so that you can recall specific versions later.
+>
+> Source: [Pro Git Book](https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control)
+
+---
+
+# Naive version control
+
+- Multiple files or directories
+    - script.py
+    - script_20210501.py
+    - script_20210504.py
+
+--
+
+- Emailing a file to yourself
+
+--
+
+- Relying on multiple backups
+
+--
+
+- Trying to remember what we did
 
 ---
 class: center, middle
@@ -68,7 +99,84 @@ class: center, middle
 ---
 class: center, middle
 
-![xkcd comic: git](https://imgs.xkcd.com/comics/git.png)
+<img src="https://static.wikia.nocookie.net/simpsons/images/c/c3/D'oh.jpg" width="55%">
+
+<!--
+    This will break at some point.
+
+    - If something stops working, it's hard to determine which change caused the problem.
+    - When do you make changes, how do you include a message of why you did what you did
+      or some other metadata about the changes.
+    - It's difficult to share your code with others...
+
+    Those methods fail especially when working on code with other people.
+
+-->
+
+---
+
+# Why version control
+
+- Stay organized
+
+<!--
+    Forget the mess of filenames. With version control, you maintain one set of files,
+    and the version control system keeps track of all of the changes.
+-->
+
+--
+
+- Save snapshots of your work
+
+<!--
+    As you make incremental changes to the code, you can save the state of that code.
+
+    You maintain a history of what you have done, and what you have tried.
+
+    You can always go back to previous snapshots. If some behavior changes, you can
+    look through the changes and try to determine what happened.
+-->
+
+--
+
+- Experiment at will
+
+<!--
+    Try whatever you want. For example you might want to implement a new method.
+    You might even have to change lots of your code. Doesn't matter because you can
+    always go back in history to a working version.
+-->
+
+--
+
+- Enable reproducibility
+
+<!--
+    Let's say you have some code associated with a publication, and you make the code
+    available. You can tell readers exactly which version of the code you used in your
+    publication.
+
+    This comes up when papers have code but the authors are still updating the code
+    over time. The readers of the paper can know _exactly_ the code used.
+-->
+
+--
+
+- Quantify how much you've done
+
+<!--
+    Figure out how many lines of code you have written over time. This is different from
+    the total lines of code in the project... could be helpful for job applications.
+-->
+
+--
+
+- Share and collaborate with the world
+
+<!--
+    Version-controlled code is easy to host online, in a place where others can see it
+    and contribute to it.
+-->
 
 ---
 
@@ -118,19 +226,19 @@ Our name and email address will be associated with all of our _commits_.
 ----
 
 [_commit_](https://git-scm.com/docs/gitglossary#Documentation/gitglossary.txt-aiddefcommitacommit):
-> As a noun: A single point in the Git history; the entire history of a project is represented as a set 
+> As a noun: A single point in the Git history; the entire history of a project is represented as a set
 of interrelated commits. The word "commit" is often used by Git in the same places other revision control
 systems use the words "revision" or "version". Also used as a short hand for commit object.
-> 
-> As a verb: The action of storing a new snapshot of the project’s state in the Git history, by creating a 
+>
+> As a verb: The action of storing a new snapshot of the project’s state in the Git history, by creating a
 new commit representing the current state of the index and advancing HEAD to point at the new commit.
 
 ---
 
-# `git` - commits visualized
+# commits visualized
 
-Each circle represents a commit. The left-most circle is the initial commit. Each subsequent circle represents changes
-made in the content (e.g., code).
+A commit is a checkpoint, and each circle represents one commit. The left-most circle is
+the initial commit. Each subsequent circle represents changes made in the content (e.g., code).
 
 Commits form a directed acyclic graph (DAG). _Each commit stores the differences in content from the previous commit_.
 
@@ -153,12 +261,12 @@ One can view the state of the repository at any commit.
 "Everything not saved will be lost." (Nintendo "quit screen" message)
 
 ---
-layout: true
+
 # `git init` | create a repository
 
 We use the command [`git init`](https://git-scm.com/docs/git-init) to initialize a repository.
 
->This command creates an empty Git repository - basically a `.git` directory with subdirectories 
+>This command creates an empty Git repository - basically a `.git` directory with subdirectories
 for `objects` [an immutable unit of storage] [...]. An initial branch without any commits will be created.
 
 ```bash
@@ -167,9 +275,7 @@ cd git-tutorial
 git init
 ```
 
----
-
----
+--
 
 At this point, we have an empty Git repository. Look at the output of `git status` to see the
 current status of the repository.
@@ -184,7 +290,6 @@ git status
 If you are confused, it will usually tell you what to do next.
 
 ---
-layout: true
 
 # add content to the repository
 
@@ -194,9 +299,7 @@ Create a file called `README.md` with the following content:
 Hello, World! This is README.md speaking.
 ```
 
----
-
----
+--
 
 And then look at the output of
 
@@ -218,21 +321,19 @@ Untracked files:
 nothing added to commit but untracked files present (use "git add" to track)
 
 ```
+
 ---
-layout: true
 
 # `git add` | ask `git` to track files
 
-Although it might seem so, `git` is not a mind-reader. It does not know about files until we explicitly 
+Although it might seem so, `git` is not a mind-reader. It does not know about files until we explicitly
 tell it to track the files. To do this, we use [`git add`](https://git-scm.com/docs/git-add).
 
 ```bash
 git add README.md
 ```
 
----
-
----
+--
 
 Again, look at the output of
 
@@ -253,11 +354,10 @@ Changes to be committed:
 ```
 
 ---
-layout: true
 
 # `git commit` | record changes
 
-Now that `git` is aware of our file, we want to commit it to memory. 
+Now that `git` is aware of our file, we want to commit it to memory.
 To do this, we use [`git commit`](https://git-scm.com/docs/git-commit).
 
 ```bash
@@ -266,9 +366,7 @@ git commit --message "initial commit of readme" README.md
 
 Every commit has a corresponding message. Make it descriptive!
 
----
-
----
+--
 
 Again, ask our old friend `git status` for the rundown.
 
@@ -324,7 +422,6 @@ This is the first commit, the ancestor of all future commits.
 .center[![xkcd comic: git commit](https://imgs.xkcd.com/comics/git_commit.png)]
 
 ---
-layout: true
 
 # Track a change
 
@@ -341,9 +438,7 @@ Hello, World! This is README.md speaking.
 This is World replying.
 ```
 
----
-
----
+--
 
 We visit our friend, quickly becoming family, `git status`:
 
@@ -367,7 +462,6 @@ git diff README.md
 ```
 
 ---
-layout: false
 
 # Track a change - staging area
 
@@ -387,7 +481,7 @@ git status
 ```
 
 ---
-layout: true
+
 # Track a change - commit to memory
 
 Now that we are confident we want to commit, let us come up with a descriptive message and commit the changes.
@@ -398,9 +492,7 @@ git commit -m "add a reply from the world"
 
 Notice that we did not add any filepaths to the command. `git commit` will commit everything in the staging area.
 
----
-
----
+--
 
 ## Our commits as a DAG
 
@@ -414,7 +506,6 @@ Notice that we did not add any filepaths to the command. `git commit` will commi
 </svg>
 
 ---
-layout: false
 
 # `git log` | show commit logs
 
@@ -439,7 +530,6 @@ Date:   Sun Feb 7 17:11:39 2021 -0500
 ```
 
 ---
-layout: false
 
 # Jakub's workflow
 
@@ -503,7 +593,6 @@ This heuristic leads to more organized code and a cleaner main branch.
 </svg>
 
 ---
-layout: true
 
 # `git checkout` | switch to a branch
 
@@ -516,9 +605,7 @@ git checkout -b add/pluto
 where `add/pluto` is the name of the branch. We chose this name because we will be adding a message from Pluto.
 See how we are describing the purpose of this feature concisely in the branch name?
 
----
-
----
+--
 
 Now if you run
 
@@ -537,7 +624,6 @@ git checkout BRANCH
 where `BRANCH` is the name of the branch.
 
 ---
-layout: true
 
 # Add a feature
 
@@ -555,9 +641,7 @@ This is World replying.
 It's cold out here, guys. -Pluto
 ```
 
----
-
----
+--
 
 ## Commit the changes
 
@@ -567,7 +651,6 @@ git commit -m "Add a message from Pluto"
 ```
 
 ---
-layout: true
 
 # `git merge` | merge the changes
 
@@ -578,9 +661,7 @@ git checkout master  # whatever the main branch is
 git merge add/pluto
 ```
 
----
-
----
+--
 
 There it is! We have merged our feature into the main branch.
 
@@ -593,7 +674,6 @@ It's cold out here, guys. -Pluto
 ```
 
 ---
-layout: false
 
 # Merge conflicts
 
@@ -620,7 +700,6 @@ git merge add/sun    # merge only the changes about the sun.
 ```
 
 ---
-layout: true
 
 # Merge conflicts
 
@@ -630,9 +709,7 @@ Let's try to merge our Milky Way feature.
 git merge add/milky-way
 ```
 
----
-
----
+--
 
 Uh oh...
 
@@ -645,14 +722,13 @@ Automatic merge failed; fix conflicts and then commit the result.
 The main issue is that the feature branch was not up to date with master.
 
 ---
-layout: false
 
 # Merge conflicts
 
-**Heuristic: always keep branches updated with master. Work out merge conflicts _before_ merging 
+**Heuristic: always keep branches updated with master. Work out merge conflicts _before_ merging
 branches into master.**
 
-Let's abort the change and fix the merge issues in the feature branch. We want a nice clean merge into the main 
+Let's abort the change and fix the merge issues in the feature branch. We want a nice clean merge into the main
 branch.
 
 ```bash
@@ -664,7 +740,6 @@ git merge master            # Merge master branch into feature branch
 We have the same error, but we will take care of it here...
 
 ---
-layout: false
 
 # Merge conflicts - resolution
 
@@ -727,7 +802,6 @@ The Milky Way is great.
 ```
 
 ---
-layout: false
 
 # Jakub's workflow - with branches
 
@@ -753,8 +827,6 @@ git merge master
 
 ---
 
-layout: false
-
 # Heuristics regarding branches
 
 1. Once there is a working main branch, _all new content should be added through branches._
@@ -765,7 +837,7 @@ layout: false
 
 # Questions?
 
-If you remember one thing, let it be 
+If you remember one thing, let it be
 
 ```bash
 git status
@@ -790,7 +862,6 @@ Also serves as a backup. If anything happens to your computer, the code is onlin
 ]
 
 ---
-layout: true
 
 # Upload your repository
 
@@ -800,9 +871,7 @@ First, we need to ask GitHub to create a new repository for us. Go to
 https://github.com/, click the plus sign in the upper-left, and select
 "New repository". Or go to https://github.com/new. You end up in the same place.
 
----
-
----
+--
 
 Second, we need to decide on a name for the repository.
 `trying-github` could work. Optionally add a short description, and leave
@@ -811,7 +880,6 @@ everything else unselected.
 Create the repository!
 
 ---
-layout: false
 
 # Upload your repository
 
@@ -825,7 +893,7 @@ git branch -M main
 git push -u origin main
 ```
 
-The line `git branch -M main` renames master to main. 
+The line `git branch -M main` renames master to main.
 [See here for more information](https://github.com/github/renaming).
 
 ---
@@ -869,7 +937,7 @@ A pull request is a request to merge my changes into a branch. Most times, a pul
 request will be made between a feature branch and the main branch. It is a request
 that we merge the feature branch into the main branch.
 
-In a pull request, users can discuss changes, request certain changes, 
+In a pull request, users can discuss changes, request certain changes,
 and see the entire history of the branch.
 
 ---
@@ -877,7 +945,7 @@ and see the entire history of the branch.
 # Collaboration - one remote
 
 Here is a workflow you can use when collaborating on a single repository. That is,
-there is only one remote involved. Perhaps you are collaborating with 
+there is only one remote involved. Perhaps you are collaborating with
 yourself - _autocollaboration_. This still applies.
 
 Let's create a new feature branch in our `git` repository.
@@ -925,25 +993,25 @@ by "forking" the repository, making changes within their forks, and making pull 
 back to the main repository.
 
 ----
+
 What the _fork?_
 
-> A fork is a copy of a repository that you manage. Forks let you make changes 
-to a project without affecting the original repository. You can fetch updates 
-from or submit changes to the original repository with pull requests. - 
+> A fork is a copy of a repository that you manage. Forks let you make changes
+to a project without affecting the original repository. You can fetch updates
+from or submit changes to the original repository with pull requests. -
 [source](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-forks)
 
 ---
-layout: false
 
 # Collaborating - multiple remotes
 
-In the upper-right of any GitHub repository, there is a button to "Fork" that repository. This makes a 
+In the upper-right of any GitHub repository, there is a button to "Fork" that repository. This makes a
 copy of the code in your account. And you are the owner of that fork. You do not affect the original repository
 in any way by forking.
 
-After we fork the repository, we clone the repository onto our computers so we can work on the code. 
+After we fork the repository, we clone the repository onto our computers so we can work on the code.
 There is a green button with the word "Code". Click that, and you are given a URL that you can use to clone
-the repository. 
+the repository.
 
 So first, fork the repository. Then clone it onto your computer.
 
